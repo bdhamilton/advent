@@ -1,9 +1,7 @@
 import os
 from datetime import datetime, date
-from flask import Flask, render_template, request, session, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template
 from dotenv import load_dotenv
-import random
 
 # Load environment variables
 load_dotenv()
@@ -12,14 +10,14 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# Use SQLite for simplicity
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///advent.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Advent calendar configuration
+# Start date for the advent calendar (format: YYYY-MM-DD)
+START_DATE = datetime.strptime(
+    os.getenv('ADVENT_START_DATE', '2024-12-01'),
+    '%Y-%m-%d'
+).date()
 
-# Initialize database
-db = SQLAlchemy(app)
-
-# Advent calendar activities
+# Ordered list of activities - same activity shown to all users on each day
 ACTIVITIES = [
     "Drink hot cocoa with marshmallows",
     "Sing a Christmas carol",
@@ -48,109 +46,33 @@ ACTIVITIES = [
     "Have a cozy movie marathon"
 ]
 
-# Database Models
-class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    session_id = db.Column(db.String(255), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    activities = db.relationship('UserActivity', backref='user', lazy=True)
-
-class UserActivity(db.Model):
-    __tablename__ = 'user_activities'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    activity = db.Column(db.String(500), nullable=False)
-    activity_date = db.Column(db.Date, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-def get_or_create_user():
-    """Get or create user based on session ID"""
-    if 'user_id' not in session:
-        session['user_id'] = os.urandom(16).hex()
-    
-    user = User.query.filter_by(session_id=session['user_id']).first()
-    if not user:
-        user = User(session_id=session['user_id'])
-        db.session.add(user)
-        db.session.commit()
-    
-    return user
-
-def get_todays_activity(user):
-    """Get or generate today's activity for the user"""
+def get_todays_activity():
+    """
+    Get today's activity based on the ordered list and start date.
+    All users see the same activity on the same day.
+    """
     today = date.today()
-    
-    # Check if user already has an activity for today
-    existing_activity = UserActivity.query.filter_by(
-        user_id=user.id,
-        activity_date=today
-    ).first()
-    
-    if existing_activity:
-        return existing_activity.activity
-    
-    # Get all activities user has already seen
-    seen_activities = [ua.activity for ua in user.activities]
-    
-    # Get unseen activities
-    available_activities = [a for a in ACTIVITIES if a not in seen_activities]
-    
-    # If all activities have been seen, reset and use all activities
-    if not available_activities:
-        available_activities = ACTIVITIES
-    
-    # Select a random activity
-    new_activity = random.choice(available_activities)
-    
-    # Save the activity
-    user_activity = UserActivity(
-        user_id=user.id,
-        activity=new_activity,
-        activity_date=today
-    )
-    db.session.add(user_activity)
-    db.session.commit()
-    
-    return new_activity
+
+    # Calculate days since start date
+    days_elapsed = (today - START_DATE).days
+
+    # Get activity index (cycles through the list if we go past the end)
+    activity_index = days_elapsed % len(ACTIVITIES)
+
+    return ACTIVITIES[activity_index]
 
 @app.route('/')
 def index():
     """Main page - display today's advent activity"""
-    user = get_or_create_user()
-    activity = get_todays_activity(user)
-    
+    activity = get_todays_activity()
+
     today = date.today()
     day_of_month = today.day
-    
-    return render_template('index.html', 
-                         activity=activity, 
+
+    return render_template('index.html',
+                         activity=activity,
                          day=day_of_month,
                          month=today.strftime('%B'))
-
-@app.route('/new-activity', methods=['POST'])
-def new_activity():
-    """Get a new random activity for today"""
-    user = get_or_create_user()
-    
-    # Delete today's activity to get a new one
-    today = date.today()
-    UserActivity.query.filter_by(
-        user_id=user.id,
-        activity_date=today
-    ).delete()
-    db.session.commit()
-    
-    # Redirect back to homepage to show the new activity
-    return redirect(url_for('index'))
-
-@app.cli.command('init-db')
-def init_db():
-    """Initialize the database."""
-    db.create_all()
-    print('Database initialized successfully!')
 
 if __name__ == '__main__':
     # Only enable debug mode if explicitly set in environment
