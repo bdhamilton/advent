@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎄 Advent Calendar 🎄</h1>
+            <p class="subtitle">{{ month }} {{ day }}</p>
+        </header>
+        
+        <main>
+            <div class="calendar-card">
+                <h2>Today's Activity</h2>
+                <div class="activity" id="activity">{{ activity }}</div>
+                
+                <form method="POST" action="/new-activity">
+                    <button type="submit" class="refresh-btn">
+                        ✨ Get Another Idea
+                    </button>
+                </form>
+            </div>
+        </main>
+        
+        <footer>
+            <p>A new activity appears each day!</p>
+        </footer>
+    </div>
+</body>
+</html>
