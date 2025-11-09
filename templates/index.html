@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advent Calendar</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
     <div class="container">
@@ -19,13 +18,11 @@
                 <h2>Today's Activity</h2>
                 <div class="activity" id="activity">{{ activity }}</div>
                 
-                <button 
-                    class="refresh-btn"
-                    hx-post="/new-activity"
-                    hx-target="#activity"
-                    hx-swap="innerHTML">
-                    ✨ Get Another Idea
-                </button>
+                <form method="POST" action="/new-activity">
+                    <button type="submit" class="refresh-btn">
+                        ✨ Get Another Idea
+                    </button>
+                </form>
             </div>
         </main>
         

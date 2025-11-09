@@ -5,21 +5,22 @@ A simple Flask/HTMX web application that displays a random Advent calendar activ
 ## Features
 
 - 🎁 **Daily Activities**: Get a random festive activity suggestion each day
-- 🔄 **Dynamic Updates**: Use HTMX for seamless, interactive experiences without heavy JavaScript
-- 💾 **User State**: PostgreSQL database tracks which activities each user has seen
+- 🔄 **Dynamic Updates**: Simple form-based interaction for getting new activities
+- 💾 **User State**: Database tracks which activities each user has seen
 - 🎨 **Beautiful UI**: Festive, responsive design that works on all devices
+- 📱 **No JavaScript Required**: Works perfectly without JavaScript enabled
 
 ## Tech Stack
 
 - **Backend**: Flask (Python web framework)
-- **Frontend**: HTMX for dynamic interactions
-- **Database**: PostgreSQL for user state persistence
+- **Frontend**: HTML/CSS with simple form submissions
+- **Database**: PostgreSQL (production) or SQLite (development/testing)
 - **ORM**: SQLAlchemy for database operations
 
 ## Prerequisites
 
 - Python 3.8+
-- PostgreSQL 12+
+- PostgreSQL 12+ (optional - SQLite used by default for development)
 - pip (Python package installer)
 
 ## Installation
@@ -41,7 +42,11 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Set up PostgreSQL database**
+4. **Set up the database**
+
+For development, SQLite is used by default (no setup needed).
+
+For production with PostgreSQL:
 ```bash
 # Create a PostgreSQL database
 createdb advent
@@ -50,27 +55,23 @@ createdb advent
 psql -U postgres
 CREATE DATABASE advent;
 \q
-```
 
-5. **Configure environment variables**
-```bash
+# Set DATABASE_URL environment variable
 cp .env.example .env
-# Edit .env with your database credentials and secret key
+# Edit .env with your PostgreSQL credentials
 ```
 
-6. **Initialize the database**
+5. **Initialize the database**
 ```bash
 flask init-db
 ```
 
-## Running the Application
-
-1. **Start the Flask development server**
+6. **Start the Flask development server**
 ```bash
 python app.py
 ```
 
-2. **Open your browser**
+7. **Open your browser**
 Navigate to `http://localhost:5000`
 
 ## Usage
@@ -98,9 +99,9 @@ advent/
 ## How It Works
 
 1. **User Sessions**: Each visitor gets a unique session ID stored in a cookie
-2. **Database Tracking**: User activities are stored in PostgreSQL with dates
+2. **Database Tracking**: User activities are stored in the database (SQLite by default, PostgreSQL in production) with dates
 3. **Activity Selection**: Each day, a random activity is selected from unseen activities
-4. **HTMX Integration**: The "Get Another Idea" button uses HTMX to fetch new activities without page reload
+4. **Form Submission**: The "Get Another Idea" button submits a form to fetch a new activity
 
 ## Database Schema
 

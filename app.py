@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, date
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import random
@@ -11,10 +11,13 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-    'DATABASE_URL',
-    'postgresql://postgres:postgres@localhost:5432/advent'
-)
+
+# Use SQLite as fallback if DATABASE_URL not set (for testing/dev)
+database_url = os.getenv('DATABASE_URL')
+if not database_url:
+    # Use SQLite for development/testing
+    database_url = 'sqlite:///advent.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
@@ -133,7 +136,7 @@ def index():
 
 @app.route('/new-activity', methods=['POST'])
 def new_activity():
-    """Get a new random activity for today (HTMX endpoint)"""
+    """Get a new random activity for today"""
     user = get_or_create_user()
     
     # Delete today's activity to get a new one
@@ -144,10 +147,8 @@ def new_activity():
     ).delete()
     db.session.commit()
     
-    # Get a new activity
-    activity = get_todays_activity(user)
-    
-    return f'<div class="activity" id="activity">{activity}</div>'
+    # Redirect back to homepage to show the new activity
+    return redirect(url_for('index'))
 
 @app.cli.command('init-db')
 def init_db():
