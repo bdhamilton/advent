@@ -12,12 +12,8 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
-# Use SQLite as fallback if DATABASE_URL not set (for testing/dev)
-database_url = os.getenv('DATABASE_URL')
-if not database_url:
-    # Use SQLite for development/testing
-    database_url = 'sqlite:///advent.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+# Use SQLite for simplicity
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///advent.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database

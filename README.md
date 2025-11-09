@@ -14,13 +14,12 @@ A simple Flask/HTMX web application that displays a random Advent calendar activ
 
 - **Backend**: Flask (Python web framework)
 - **Frontend**: HTML/CSS with simple form submissions
-- **Database**: PostgreSQL (production) or SQLite (development/testing)
+- **Database**: SQLite (file-based, no setup required)
 - **ORM**: SQLAlchemy for database operations
 
 ## Prerequisites
 
 - Python 3.8+
-- PostgreSQL 12+ (optional - SQLite used by default for development)
 - pip (Python package installer)
 
 ## Installation
@@ -42,36 +41,17 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Set up the database**
-
-For development, SQLite is used by default (no setup needed).
-
-For production with PostgreSQL:
-```bash
-# Create a PostgreSQL database
-createdb advent
-
-# Or using psql:
-psql -U postgres
-CREATE DATABASE advent;
-\q
-
-# Set DATABASE_URL environment variable
-cp .env.example .env
-# Edit .env with your PostgreSQL credentials
-```
-
-5. **Initialize the database**
+4. **Initialize the database**
 ```bash
 flask init-db
 ```
 
-6. **Start the Flask development server**
+5. **Start the Flask development server**
 ```bash
 python app.py
 ```
 
-7. **Open your browser**
+6. **Open your browser**
 Navigate to `http://localhost:5000`
 
 ## Usage
@@ -99,7 +79,7 @@ advent/
 ## How It Works
 
 1. **User Sessions**: Each visitor gets a unique session ID stored in a cookie
-2. **Database Tracking**: User activities are stored in the database (SQLite by default, PostgreSQL in production) with dates
+2. **Database Tracking**: User activities are stored in SQLite database with dates
 3. **Activity Selection**: Each day, a random activity is selected from unseen activities
 4. **Form Submission**: The "Get Another Idea" button submits a form to fetch a new activity
 
@@ -126,13 +106,13 @@ To modify the activities list, edit the `ACTIVITIES` array in `app.py`.
 For production deployment:
 
 1. Set a strong `SECRET_KEY` in your environment variables
-2. Update `DATABASE_URL` with your production database credentials
-3. Set `debug=False` in the Flask app configuration
-4. Use a production WSGI server like Gunicorn:
+2. Use a production WSGI server like Gunicorn:
 ```bash
 pip install gunicorn
 gunicorn app:app
 ```
+3. Consider using a reverse proxy like Nginx
+4. Ensure the SQLite database file has proper permissions and backups
 
 ## License
 
