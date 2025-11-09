@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advent Calendar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎄 Advent Calendar 🎄</h1>
+            <p class="subtitle">{{ month }} {{ day }}</p>
+        </header>
+        
+        <main>
+            <div class="calendar-card">
+                <h2>Today's Activity</h2>
+                <div class="activity" id="activity">{{ activity }}</div>
+                
+                <button 
+                    class="refresh-btn"
+                    hx-post="/new-activity"
+                    hx-target="#activity"
+                    hx-swap="innerHTML">
+                    ✨ Get Another Idea
+                </button>
+            </div>
+        </main>
+        
+        <footer>
+            <p>A new activity appears each day!</p>
+        </footer>
+    </div>
+</body>
+</html>
