@@ -46,12 +46,24 @@ pip install -r requirements.txt
 flask init-db
 ```
 
-5. **Start the Flask development server**
+## Running the Application
+
+**For development** (with debug mode for auto-reload and detailed errors):
+```bash
+# Create a .env file from the example
+cp .env.example .env
+
+# Edit .env and set FLASK_DEBUG=true
+# Then run:
+python app.py
+```
+
+**For production** (debug mode disabled by default):
 ```bash
 python app.py
 ```
 
-6. **Open your browser**
+**Open your browser**
 Navigate to `http://localhost:5000`
 
 ## Usage
