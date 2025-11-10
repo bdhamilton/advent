@@ -16,12 +16,44 @@
         <main>
             <div class="calendar-card">
                 <h2>Today's Activity</h2>
-                <div class="activity" id="activity">{{ activity }}</div>
+                <div class="activity-container">
+                    <div class="activity" id="activity">{{ activity }}</div>
+                    <form method="POST" action="/toggle-activity" class="checkbox-form">
+                        <input type="hidden" name="activity" value="{{ activity }}">
+                        <label class="checkbox-label">
+                            <input type="checkbox"
+                                   name="completed"
+                                   {% if activity in completed %}checked{% endif %}
+                                   onchange="this.form.submit()">
+                            <span>Mark as complete</span>
+                        </label>
+                    </form>
+                </div>
+            </div>
+
+            <div class="calendar-card activities-list-card">
+                <h2>All Activities</h2>
+                <div class="activities-list">
+                    {% for item in activities_list %}
+                    <div class="activity-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}">
+                        <form method="POST" action="/toggle-activity" class="activity-checkbox-form">
+                            <input type="hidden" name="activity" value="{{ item.text }}">
+                            <label class="activity-checkbox-label">
+                                <input type="checkbox"
+                                       {% if item.completed %}checked{% endif %}
+                                       onchange="this.form.submit()">
+                                <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
+                                <span class="activity-text">{{ item.text }}</span>
+                            </label>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </main>
 
         <footer>
-            <p>A new ordered activity appears each day!</p>
+            <p>Check off activities as you complete them!</p>
         </footer>
     </div>
 </body>
