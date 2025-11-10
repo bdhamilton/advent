@@ -1,21 +1,21 @@
 # Advent Calendar 🎄
 
-A simple Flask/HTMX web application that displays a random Advent calendar activity idea to users each day. Built with a lean stack focusing on simplicity.
+A simple Flask web application that displays ordered Advent calendar activity ideas. All users see the same activity on the same day, progressing through a predetermined sequence. Built with a minimal stack focusing on simplicity.
 
 ## Features
 
-- 🎁 **Daily Activities**: Get a random festive activity suggestion each day
-- 🔄 **Dynamic Updates**: Simple form-based interaction for getting new activities
-- 💾 **User State**: Database tracks which activities each user has seen
+- 🎁 **Daily Activities**: Get a festive activity suggestion each day in a predetermined order
+- 👥 **Consistent Experience**: All users see the same activity on the same day
+- 🗓️ **Configurable Start Date**: Set your own start date for the activity sequence
 - 🎨 **Beautiful UI**: Festive, responsive design that works on all devices
 - 📱 **No JavaScript Required**: Works perfectly without JavaScript enabled
+- 🚀 **No Database Required**: Stateless design for easy deployment
 
 ## Tech Stack
 
 - **Backend**: Flask (Python web framework)
-- **Frontend**: HTML/CSS with simple form submissions
-- **Database**: SQLite (file-based, no setup required)
-- **ORM**: SQLAlchemy for database operations
+- **Frontend**: HTML/CSS
+- **Configuration**: Environment variables with python-dotenv
 
 ## Prerequisites
 
@@ -41,20 +41,22 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Initialize the database**
+4. **Configure the application**
 ```bash
-flask init-db
+# Create a .env file from the example
+cp .env.example .env
+
+# Edit .env to customize:
+# - SECRET_KEY: Set a unique secret key for sessions
+# - ADVENT_START_DATE: Set your advent calendar start date (default: 2024-12-01)
+# - FLASK_DEBUG: Set to 'true' for development mode
 ```
 
 ## Running the Application
 
 **For development** (with debug mode for auto-reload and detailed errors):
 ```bash
-# Create a .env file from the example
-cp .env.example .env
-
-# Edit .env and set FLASK_DEBUG=true
-# Then run:
+# Set FLASK_DEBUG=true in your .env file, then run:
 python app.py
 ```
 
@@ -69,9 +71,10 @@ Navigate to `http://localhost:5000`
 ## Usage
 
 - Visit the homepage to see today's Advent activity
-- Click "✨ Get Another Idea" to get a different activity suggestion
-- Each day you'll get a new random activity from the calendar
-- The app remembers which activities you've seen to avoid repetition
+- Each day, a new activity from the ordered list is displayed
+- All users see the same activity on the same day
+- The sequence starts from your configured `ADVENT_START_DATE`
+- Activities cycle through the list in order (25 activities total)
 
 ## Project Structure
 
@@ -90,41 +93,48 @@ advent/
 
 ## How It Works
 
-1. **User Sessions**: Each visitor gets a unique session ID stored in a cookie
-2. **Database Tracking**: User activities are stored in SQLite database with dates
-3. **Activity Selection**: Each day, a random activity is selected from unseen activities
-4. **Form Submission**: The "Get Another Idea" button submits a form to fetch a new activity
+1. **Stateless Design**: No database or user tracking required - completely stateless
+2. **Date-Based Calculation**: Activity is determined by calculating days elapsed since `ADVENT_START_DATE`
+3. **Ordered Sequence**: Activities are displayed in the order they appear in the `ACTIVITIES` list
+4. **Automatic Cycling**: After 25 days, the sequence repeats from the beginning using modulo arithmetic
+5. **Consistent Experience**: All users see the same activity on the same day
 
-## Database Schema
+## Customization
 
-### Users Table
-- `id`: Primary key
-- `session_id`: Unique session identifier
-- `created_at`: Timestamp of user creation
+### Modifying Activities
 
-### User Activities Table
-- `id`: Primary key
-- `user_id`: Foreign key to users table
-- `activity`: The activity text
-- `activity_date`: Date the activity was assigned
-- `created_at`: Timestamp of record creation
+Edit the `ACTIVITIES` list in `app.py` to customize the activity sequence:
 
-## Development
+```python
+ACTIVITIES = [
+    "Your first activity",
+    "Your second activity",
+    # ... add as many as you want
+]
+```
 
-To modify the activities list, edit the `ACTIVITIES` array in `app.py`.
+### Changing the Start Date
+
+Set the `ADVENT_START_DATE` in your `.env` file:
+```
+ADVENT_START_DATE=2024-12-01
+```
+
+The format is `YYYY-MM-DD`. The first activity will be shown on this date.
 
 ## Production Deployment
 
 For production deployment:
 
 1. Set a strong `SECRET_KEY` in your environment variables
-2. Use a production WSGI server like Gunicorn:
+2. Configure your `ADVENT_START_DATE` appropriately
+3. Use a production WSGI server like Gunicorn:
 ```bash
 pip install gunicorn
 gunicorn app:app
 ```
-3. Consider using a reverse proxy like Nginx
-4. Ensure the SQLite database file has proper permissions and backups
+4. Consider using a reverse proxy like Nginx
+5. The application is stateless, so it scales horizontally without any shared state concerns
 
 ## License
 
