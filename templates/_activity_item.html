@@ -1,5 +1,6 @@
-<div class="activity-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
-     id="activity-item-{{ index }}">
+<div class="wheel-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
+     id="activity-item-{{ index }}"
+     data-index="{{ index }}">
     <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
           id="activity-form-{{ index }}"
           hx-post="/toggle-activity"
@@ -7,12 +8,16 @@
           hx-swap="outerHTML">
         <input type="hidden" name="activity" value="{{ item.text }}">
         <input type="hidden" name="index" value="{{ index }}">
-        <label class="activity-checkbox-label">
-            <input type="checkbox"
-                   {% if item.completed %}checked{% endif %}
-                   onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
-            <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
-            <span class="activity-text">{{ item.text }}</span>
-        </label>
+        <div class="wheel-item-content">
+            <div class="activity-info">
+                <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
+                <span class="activity-text">{{ item.text }}</span>
+            </div>
+            <label class="wheel-checkbox-label">
+                <input type="checkbox"
+                       {% if item.completed %}checked{% endif %}
+                       onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
+            </label>
+        </div>
     </form>
 </div>
