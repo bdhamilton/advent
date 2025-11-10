@@ -15,57 +15,47 @@
         </header>
         
         <main>
-            <div class="calendar-card">
-                <h2>Today's Activity</h2>
-                <div class="activity-container">
-                    <div class="activity" id="activity">{{ activity }}</div>
-                    <form method="POST" action="/toggle-activity" class="checkbox-form"
-                          id="today-activity-form"
-                          hx-post="/toggle-activity"
-                          hx-target="#today-activity-form"
-                          hx-swap="outerHTML">
-                        <input type="hidden" name="activity" value="{{ activity }}">
-                        <label class="checkbox-label">
-                            <input type="checkbox"
-                                   name="completed"
-                                   {% if activity in completed %}checked{% endif %}
-                                   onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
-                            <span>Mark as complete</span>
-                        </label>
-                    </form>
-                </div>
-            </div>
-
-            <div class="calendar-card activities-list-card">
-                <h2>All Activities</h2>
-                <div class="activities-list">
-                    {% for item in activities_list %}
-                    <div class="activity-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
-                         id="activity-item-{{ loop.index0 }}">
-                        <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
-                              id="activity-form-{{ loop.index0 }}"
-                              hx-post="/toggle-activity"
-                              hx-target="#activity-item-{{ loop.index0 }}"
-                              hx-swap="outerHTML">
-                            <input type="hidden" name="activity" value="{{ item.text }}">
-                            <input type="hidden" name="index" value="{{ loop.index0 }}">
-                            <label class="activity-checkbox-label">
-                                <input type="checkbox"
-                                       {% if item.completed %}checked{% endif %}
-                                       onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
-                                <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
-                                <span class="activity-text">{{ item.text }}</span>
-                            </label>
-                        </form>
+            <div class="wheel-container">
+                <div class="wheel-viewport">
+                    <div class="wheel-items" id="wheel-items">
+                        {% for item in activities_list %}
+                        <div class="wheel-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
+                             id="activity-item-{{ loop.index0 }}"
+                             data-index="{{ loop.index0 }}">
+                            <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
+                                  id="activity-form-{{ loop.index0 }}"
+                                  hx-post="/toggle-activity"
+                                  hx-target="#activity-item-{{ loop.index0 }}"
+                                  hx-swap="outerHTML">
+                                <input type="hidden" name="activity" value="{{ item.text }}">
+                                <input type="hidden" name="index" value="{{ loop.index0 }}">
+                                <div class="wheel-item-content">
+                                    <div class="activity-info">
+                                        <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
+                                        <span class="activity-text">{{ item.text }}</span>
+                                    </div>
+                                    <label class="wheel-checkbox-label">
+                                        <input type="checkbox"
+                                               {% if item.completed %}checked{% endif %}
+                                               onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                </div>
+                <div class="wheel-navigation">
+                    <button class="wheel-nav-btn" id="wheel-prev">▲</button>
+                    <button class="wheel-nav-btn" id="wheel-next">▼</button>
                 </div>
             </div>
         </main>
 
         <footer>
-            <p>Check off activities as you complete them!</p>
+            <p>Turn the wheel to view past activities!</p>
         </footer>
     </div>
+    <script src="{{ url_for('static', filename='js/wheel.js') }}"></script>
 </body>
 </html>
