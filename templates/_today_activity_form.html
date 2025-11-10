@@ -1,0 +1,14 @@
+<form method="POST" action="/toggle-activity" class="checkbox-form"
+      id="today-activity-form"
+      hx-post="/toggle-activity"
+      hx-target="#today-activity-form"
+      hx-swap="outerHTML">
+    <input type="hidden" name="activity" value="{{ activity }}">
+    <label class="checkbox-label">
+        <input type="checkbox"
+               name="completed"
+               {% if activity in completed %}checked{% endif %}
+               onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
+        <span>Mark as complete</span>
+    </label>
+</form>

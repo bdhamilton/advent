@@ -121,9 +121,31 @@ def index():
 def toggle_activity():
     """Toggle the completion status of an activity"""
     activity = request.form.get('activity')
+    index = request.form.get('index')
+
     if activity and activity in ACTIVITIES:
         toggle_activity_completion(activity)
-    return redirect(url_for('index'))
+
+    # Get updated completion status
+    completed = get_completed_activities()
+    today_activity = get_todays_activity()
+
+    # If this is from the activities list (has index), return the activity item partial
+    if index is not None:
+        index = int(index)
+        activity_date = START_DATE + timedelta(days=index)
+        item = {
+            'text': ACTIVITIES[index],
+            'date': activity_date,
+            'completed': ACTIVITIES[index] in completed,
+            'is_today': ACTIVITIES[index] == today_activity
+        }
+        return render_template('_activity_item.html', item=item, index=index)
+
+    # Otherwise, return the today's activity form partial
+    return render_template('_today_activity_form.html',
+                         activity=today_activity,
+                         completed=completed)
 
 if __name__ == '__main__':
     # Only enable debug mode if explicitly set in environment
