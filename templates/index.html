@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advent Calendar</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
     <div class="container">
@@ -18,13 +19,17 @@
                 <h2>Today's Activity</h2>
                 <div class="activity-container">
                     <div class="activity" id="activity">{{ activity }}</div>
-                    <form method="POST" action="/toggle-activity" class="checkbox-form">
+                    <form method="POST" action="/toggle-activity" class="checkbox-form"
+                          id="today-activity-form"
+                          hx-post="/toggle-activity"
+                          hx-target="#today-activity-form"
+                          hx-swap="outerHTML">
                         <input type="hidden" name="activity" value="{{ activity }}">
                         <label class="checkbox-label">
                             <input type="checkbox"
                                    name="completed"
                                    {% if activity in completed %}checked{% endif %}
-                                   onchange="this.form.submit()">
+                                   onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
                             <span>Mark as complete</span>
                         </label>
                     </form>
@@ -35,13 +40,19 @@
                 <h2>All Activities</h2>
                 <div class="activities-list">
                     {% for item in activities_list %}
-                    <div class="activity-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}">
-                        <form method="POST" action="/toggle-activity" class="activity-checkbox-form">
+                    <div class="activity-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
+                         id="activity-item-{{ loop.index0 }}">
+                        <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
+                              id="activity-form-{{ loop.index0 }}"
+                              hx-post="/toggle-activity"
+                              hx-target="#activity-item-{{ loop.index0 }}"
+                              hx-swap="outerHTML">
                             <input type="hidden" name="activity" value="{{ item.text }}">
+                            <input type="hidden" name="index" value="{{ loop.index0 }}">
                             <label class="activity-checkbox-label">
                                 <input type="checkbox"
                                        {% if item.completed %}checked{% endif %}
-                                       onchange="this.form.submit()">
+                                       onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
                                 <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
                                 <span class="activity-text">{{ item.text }}</span>
                             </label>
