@@ -19,31 +19,30 @@ START_DATE = datetime.strptime(
 
 # Ordered list of activities - same activity shown to all users on each day
 ACTIVITIES = [
-    "Drink hot cocoa with marshmallows",
-    "Sing a Christmas carol",
-    "Bake Christmas cookies",
-    "Watch a holiday movie",
-    "Make paper snowflakes",
-    "Read a Christmas story",
-    "Write a letter to Santa",
-    "Decorate the Christmas tree",
-    "Make homemade ornaments",
-    "Light a festive candle",
-    "Go caroling in the neighborhood",
-    "Make a gingerbread house",
-    "String popcorn garland",
-    "Donate to a local charity",
-    "Make holiday cards",
-    "Have a snowball fight",
-    "Build a snowman",
-    "Go ice skating",
-    "Visit a Christmas market",
-    "Wrap presents with festive paper",
-    "Look at Christmas lights",
-    "Roast chestnuts",
-    "Make a advent wreath",
-    "Listen to Christmas music",
-    "Have a cozy movie marathon"
+    "Have a snowball fight (with real or paper snowballs).",
+    "Buy a new ornament.",
+    "Have dinner under the Christmas tree.",
+    "Send someone on a candy cane hunt.",
+    "<a href='https://www.target.com/p/christmas-tree-house-gingerbread-house-kit-28-5oz-favorite-day-8482/-/A-85929069#lnk=sametab' target='_blank'>Decorate a gingerbread house.</a>",
+    "<a href='https://www.target.com/p/christmas-tree-house-gingerbread-house-kit-28-5oz-favorite-day-8482/-/A-85929069#lnk=sametab' target='_blank'>Christmas music dance party!</a>",
+    "Spend all day in Christmas PJs.",
+    "<a href='https://www.uspsoperationsanta.com/getinvolved' target='_blank'>Write and send a letter to Santa.</a>",
+    "<a href='https://www.southernliving.com/food/drinks/spike-store-bought-eggnog' target='_blank'>Drink (spiked?) eggnog.</a>",
+    "Eat dinner by candlelight.",
+    "<a href='https://designimprovised.com//2016/12/diy-christmas-present-wreath.html' target='_blank'>Do a holiday-themed craft.</a> (You'll need <a href='https://www.michaels.com/product/18-wire-wreath-frame-by-ashland-10174335?michaelsStore=1577&inv=20' target='_blank'>this</a> and <a href='https://www.amazon.com/Liliful-Christmas-Ornaments-Miniature-Decorations/dp/B0CCHSG7ZC/' target='_blank'>these</a>.)",
+    "<a href='https://www.amazon.com/gp/video/detail/B09PQDYN2R/ref=atv_sr_fle_c_sr62ef6f_1_1_1?sr=1-1&pageTypeIdSource=ASIN&pageTypeId=B09PQKZJYZ&qid=1762890220649' target='_blank'>Have a Christmas movie night.</a>",
+    "Go caroling.",
+    "<a href='https://smittenkitchen.com/2019/12/unfussy-sugar-cookies/' target='_blank'>Bake and decorate sugar cookies.</a>",
+    "Deliver holiday treats to your neighbors.",
+    "<a href='https://www.amazon.com/Mudpuppy-Merry-Catmas-Illustrations-Christmas/dp/0735386315/' target='_blank'>Complete a holiday-themed puzzle.</a>",
+    "Wear a Santa hat to run errands.",
+    "Donate to a local nonprofit.",
+    "Attend a holiday-themed event.",
+    "Take a drive to look at Christmas lights.",
+    "Get a picture with Santa.",
+    "<a href='https://www.marthastewart.com/266694/decorating-with-paper-snowflakes' target='_blank'>Make paper snowflakes.</a>",
+    "Drink hot cocoa—bonus points if you doctor it with whipped cream, marshmallows, and sprinkles.",
+    "Read The Night Before Christmas."
 ]
 
 def get_todays_activity():
@@ -150,4 +149,4 @@ def toggle_activity():
 if __name__ == '__main__':
     # Only enable debug mode if explicitly set in environment
     debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
-    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
+    app.run(debug=debug_mode, host='0.0.0.0', port=5123)
