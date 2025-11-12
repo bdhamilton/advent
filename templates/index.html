@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advent Calendar</title>
+    <link rel="stylesheet" href="https://use.typekit.net/nda2wjz.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎄 Advent Calendar 🎄</h1>
-            <p class="subtitle">{{ month }} {{ day }}</p>
+            <h1><img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon"> Advent Calendar <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon"></h1>
+            <p class="subtitle">Today is {{ month }} {{ day }}</p>
         </header>
 
         <main>
