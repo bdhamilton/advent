@@ -89,7 +89,8 @@ class ActivityWheel {
 
         this.items.forEach((item, index) => {
             const offset = index - this.currentIndex;
-            const posY = centerY + (offset * this.itemHeight);
+            // Shift everything down by one item height to show previous item above
+            const posY = centerY + (offset * this.itemHeight) + this.itemHeight;
 
             // Calculate scale and opacity based on distance from center
             const distance = Math.abs(offset);

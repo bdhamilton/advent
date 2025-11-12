@@ -68,7 +68,7 @@ def get_activity_for_date(target_date):
     activity_index = days_elapsed % len(ACTIVITIES)
     return ACTIVITIES[activity_index]
 
-def get_completed_activities():
+def get_completed_activities(): 
     """
     Get the set of completed activities from session.
     Returns a set of activity strings.
