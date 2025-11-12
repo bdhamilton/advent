@@ -92,29 +92,48 @@ def toggle_activity_completion(activity):
 @app.route('/')
 def index():
     """Main page - display today's advent activity"""
-    activity = get_todays_activity()
+    today = date.today()
     completed = get_completed_activities()
 
-    today = date.today()
-    day_of_month = today.day
+    # Check if we're before the start date
+    if today < START_DATE:
+        return render_template('index.html',
+                             before_start=True,
+                             start_date=START_DATE,
+                             activities_list=[])
 
-    # Build list of all activities with their dates and completion status
+    # Check if we're after all activities
+    end_date = START_DATE + timedelta(days=len(ACTIVITIES) - 1)
+    after_end = today > end_date
+
+    # Build list of activities up to today (or all if after end)
     activities_list = []
     for i, act in enumerate(ACTIVITIES):
         activity_date = START_DATE + timedelta(days=i)
+
+        # Skip future activities unless we're past the end
+        if not after_end and activity_date > today:
+            break
+
+        is_today = activity_date == today and not after_end
         activities_list.append({
             'text': act,
             'date': activity_date,
             'completed': act in completed,
-            'is_today': act == activity
+            'is_today': is_today
         })
+
+    # Get current activity for display
+    activity = get_todays_activity() if not after_end else None
 
     return render_template('index.html',
                          activity=activity,
-                         day=day_of_month,
+                         day=today.day,
                          month=today.strftime('%B'),
                          completed=completed,
-                         activities_list=activities_list)
+                         activities_list=activities_list,
+                         before_start=False,
+                         after_end=after_end)
 
 @app.route('/toggle-activity', methods=['POST'])
 def toggle_activity():

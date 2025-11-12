@@ -10,13 +10,22 @@ class ActivityWheel {
 
     findTodayIndex() {
         const todayItem = this.items.findIndex(item => item.classList.contains('today'));
-        return todayItem >= 0 ? todayItem : this.items.length - 1;
+        // Default to last item (most recent) if no "today" found
+        return todayItem >= 0 ? todayItem : Math.max(0, this.items.length - 1);
     }
 
     init() {
+        // Check if wheel elements exist (they won't if we're before start date)
+        const prevBtn = document.getElementById('wheel-prev');
+        const nextBtn = document.getElementById('wheel-next');
+
+        if (!prevBtn || !nextBtn || this.items.length === 0) {
+            return; // No wheel to initialize
+        }
+
         // Set up navigation buttons
-        document.getElementById('wheel-prev').addEventListener('click', () => this.rotate(-1));
-        document.getElementById('wheel-next').addEventListener('click', () => this.rotate(1));
+        prevBtn.addEventListener('click', () => this.rotate(-1));
+        nextBtn.addEventListener('click', () => this.rotate(1));
 
         // Support mouse wheel scrolling
         this.wheelItems.addEventListener('wheel', (e) => {
