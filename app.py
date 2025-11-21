@@ -24,7 +24,7 @@ ACTIVITIES = [
     "Have dinner under the Christmas tree.",
     "Send someone on a candy cane hunt.",
     "<a href='https://www.target.com/p/christmas-tree-house-gingerbread-house-kit-28-5oz-favorite-day-8482/-/A-85929069#lnk=sametab' target='_blank'>Decorate a gingerbread house.</a>",
-    "<a href='https://www.target.com/p/christmas-tree-house-gingerbread-house-kit-28-5oz-favorite-day-8482/-/A-85929069#lnk=sametab' target='_blank'>Christmas music dance party!</a>",
+    "<a href='https://open.spotify.com/playlist/37i9dQZF1EIhDXz0VERqWQ?si=L2GTzlI3TnmvrQYkolo-bA&pi=u-fKf0FzLTSMqD' target='_blank'>Christmas music dance party!</a>",
     "Spend all day in Christmas PJs.",
     "<a href='https://www.uspsoperationsanta.com/getinvolved' target='_blank'>Write and send a letter to Santa.</a>",
     "<a href='https://www.southernliving.com/food/drinks/spike-store-bought-eggnog' target='_blank'>Drink (spiked?) eggnog.</a>",
@@ -42,7 +42,7 @@ ACTIVITIES = [
     "Get a picture with Santa.",
     "<a href='https://www.marthastewart.com/266694/decorating-with-paper-snowflakes' target='_blank'>Make paper snowflakes.</a>",
     "Drink hot cocoa—bonus points if you doctor it with whipped cream, marshmallows, and sprinkles.",
-    "Read The Night Before Christmas."
+    "Read <em>The Night Before Christmas</em>."
 ]
 
 def get_todays_activity():
@@ -100,6 +100,8 @@ def index():
         return render_template('index.html',
                              before_start=True,
                              start_date=START_DATE,
+                             day=today.day,
+                             month=today.strftime('%B'),
                              activities_list=[])
 
     # Check if we're after all activities
@@ -138,32 +140,17 @@ def index():
 @app.route('/toggle-activity', methods=['POST'])
 def toggle_activity():
     """Toggle the completion status of an activity"""
-    activity = request.form.get('activity')
-    index = request.form.get('index')
+    activity = request.json.get('activity') if request.is_json else request.form.get('activity')
 
     if activity and activity in ACTIVITIES:
         toggle_activity_completion(activity)
+        completed = get_completed_activities()
+        return jsonify({
+            'success': True,
+            'completed': activity in completed
+        })
 
-    # Get updated completion status
-    completed = get_completed_activities()
-    today_activity = get_todays_activity()
-
-    # If this is from the activities list (has index), return the activity item partial
-    if index is not None:
-        index = int(index)
-        activity_date = START_DATE + timedelta(days=index)
-        item = {
-            'text': ACTIVITIES[index],
-            'date': activity_date,
-            'completed': ACTIVITIES[index] in completed,
-            'is_today': ACTIVITIES[index] == today_activity
-        }
-        return render_template('_activity_item.html', item=item, index=index)
-
-    # Otherwise, return the today's activity form partial
-    return render_template('_today_activity_form.html',
-                         activity=today_activity,
-                         completed=completed)
+    return jsonify({'success': False}), 400
 
 if __name__ == '__main__':
     # Only enable debug mode if explicitly set in environment

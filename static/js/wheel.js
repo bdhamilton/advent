@@ -62,11 +62,57 @@ class ActivityWheel {
         // Initial render
         this.updateWheel();
 
-        // Listen for HTMX updates to refresh wheel
-        document.body.addEventListener('htmx:afterSwap', () => {
-            // Re-query items in case they were updated
-            this.items = Array.from(document.querySelectorAll('.wheel-item'));
-            this.updateWheel();
+        // Set up checkbox toggle handlers
+        this.setupCheckboxHandlers();
+    }
+
+    setupCheckboxHandlers() {
+        // Add click handlers to all checkboxes
+        document.querySelectorAll('.activity-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const wheelItem = e.target.closest('.wheel-item');
+                const activity = wheelItem.dataset.activity;
+                const isChecked = e.target.checked;
+
+                // Optimistically update UI
+                if (isChecked) {
+                    wheelItem.classList.add('completed');
+                } else {
+                    wheelItem.classList.remove('completed');
+                }
+
+                // Send update to server
+                fetch('/toggle-activity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ activity: activity })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        // Rollback on failure
+                        e.target.checked = !isChecked;
+                        if (isChecked) {
+                            wheelItem.classList.remove('completed');
+                        } else {
+                            wheelItem.classList.add('completed');
+                        }
+                        console.error('Failed to toggle activity');
+                    }
+                })
+                .catch(error => {
+                    // Rollback on error
+                    e.target.checked = !isChecked;
+                    if (isChecked) {
+                        wheelItem.classList.remove('completed');
+                    } else {
+                        wheelItem.classList.add('completed');
+                    }
+                    console.error('Error toggling activity:', error);
+                });
+            });
         });
     }
 
@@ -125,15 +171,11 @@ class ActivityWheel {
             item.style.zIndex = zIndex;
             item.style.pointerEvents = distance > 3 ? 'none' : 'auto';
 
-            // Update visual state for center item
+            // Update visual state for center item using class
             if (distance === 0) {
-                item.style.boxShadow = '0 12px 32px rgba(102, 126, 234, 0.4)';
+                item.classList.add('wheel-center');
             } else {
-                if (item.classList.contains('today')) {
-                    item.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.3)';
-                } else {
-                    item.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-                }
+                item.classList.remove('wheel-center');
             }
         });
 

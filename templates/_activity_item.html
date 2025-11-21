@@ -10,7 +10,7 @@
         <input type="hidden" name="index" value="{{ index }}">
         <div class="wheel-item-content">
             <div class="activity-info">
-                <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
+                <span class="activity-date">{{ item.date.strftime('%b %-d') }}</span>
                 <span class="activity-text">{{ item.text | safe }}</span>
             </div>
             <label class="wheel-checkbox-label">

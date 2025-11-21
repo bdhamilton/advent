@@ -11,14 +11,18 @@
 <body>
     <div class="container">
         <header>
-            <h1><img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon"> Advent Calendar <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon"></h1>
-            <p class="subtitle">Today is {{ month }} {{ day }}</p>
+            <h1>
+                <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon" width="100">
+                Chase the cheer
+                <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon" width="100">
+            </h1>
+            <p class="subtitle">A daily December to-do, from the Hamiltons to you.</p>
         </header>
 
         <main>
             {% if before_start %}
             <div class="message-container">
-                <p class="early-message">🎅 Check back on {{ start_date.strftime('%B %d, %Y') }} to start your advent adventure! 🎅</p>
+                <p class="early-message">Check back on {{ start_date.strftime('%B %-d, %Y,') }} to kick off the season!</p>
             </div>
             {% elif after_end %}
             <div class="wheel-container">
@@ -27,26 +31,19 @@
                         {% for item in activities_list %}
                         <div class="wheel-item {% if item.completed %}completed{% endif %}"
                              id="activity-item-{{ loop.index0 }}"
-                             data-index="{{ loop.index0 }}">
-                            <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
-                                  id="activity-form-{{ loop.index0 }}"
-                                  hx-post="/toggle-activity"
-                                  hx-target="#activity-item-{{ loop.index0 }}"
-                                  hx-swap="outerHTML">
-                                <input type="hidden" name="activity" value="{{ item.text }}">
-                                <input type="hidden" name="index" value="{{ loop.index0 }}">
-                                <div class="wheel-item-content">
-                                    <div class="activity-info">
-                                        <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
-                                        <span class="activity-text">{{ item.text | safe }}</span>
-                                    </div>
-                                    <label class="wheel-checkbox-label">
-                                        <input type="checkbox"
-                                               {% if item.completed %}checked{% endif %}
-                                               onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
-                                    </label>
+                             data-index="{{ loop.index0 }}"
+                             data-activity="{{ item.text }}">
+                            <div class="wheel-item-content">
+                                <div class="activity-info">
+                                    <span class="activity-date">{{ item.date.strftime('%b %-d') }}</span>
+                                    <span class="activity-text">{{ item.text | safe }}</span>
                                 </div>
-                            </form>
+                                <label class="wheel-checkbox-label">
+                                    <input type="checkbox"
+                                           {% if item.completed %}checked{% endif %}
+                                           class="activity-checkbox">
+                                </label>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -63,26 +60,19 @@
                         {% for item in activities_list %}
                         <div class="wheel-item {% if item.is_today %}today{% endif %} {% if item.completed %}completed{% endif %}"
                              id="activity-item-{{ loop.index0 }}"
-                             data-index="{{ loop.index0 }}">
-                            <form method="POST" action="/toggle-activity" class="activity-checkbox-form"
-                                  id="activity-form-{{ loop.index0 }}"
-                                  hx-post="/toggle-activity"
-                                  hx-target="#activity-item-{{ loop.index0 }}"
-                                  hx-swap="outerHTML">
-                                <input type="hidden" name="activity" value="{{ item.text }}">
-                                <input type="hidden" name="index" value="{{ loop.index0 }}">
-                                <div class="wheel-item-content">
-                                    <div class="activity-info">
-                                        <span class="activity-date">{{ item.date.strftime('%b %d') }}</span>
-                                        <span class="activity-text">{{ item.text | safe }}</span>
-                                    </div>
-                                    <label class="wheel-checkbox-label">
-                                        <input type="checkbox"
-                                               {% if item.completed %}checked{% endif %}
-                                               onchange="this.closest('form').dispatchEvent(new Event('submit', {bubbles: true, cancelable: true}))">
-                                    </label>
+                             data-index="{{ loop.index0 }}"
+                             data-activity="{{ item.text }}">
+                            <div class="wheel-item-content">
+                                <div class="activity-info">
+                                    <span class="activity-date">{{ item.date.strftime('%b %-d') }}</span>
+                                    <span class="activity-text">{{ item.text | safe }}</span>
                                 </div>
-                            </form>
+                                <label class="wheel-checkbox-label">
+                                    <input type="checkbox"
+                                           {% if item.completed %}checked{% endif %}
+                                           class="activity-checkbox">
+                                </label>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -100,6 +90,9 @@
             <p>Turn the wheel to view past activities!</p>
             {% endif %}
         </footer>
+    </div>
+    <div class="attribution">
+        Made with ♥
     </div>
     <script src="{{ url_for('static', filename='js/wheel.js') }}"></script>
 </body>
