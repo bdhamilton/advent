@@ -11,11 +11,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>
-                <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon" width="100">
-                Chase the cheer
-                <img src="{{ url_for('static', filename='img/1.png') }}" alt="" class="header-icon" width="100">
-            </h1>
+            <h1>Chase the cheer</h1>
             <p class="subtitle">A daily December to-do, from the Hamiltons to you.</p>
         </header>
 
@@ -48,10 +44,6 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="wheel-navigation">
-                    <button class="wheel-nav-btn" id="wheel-prev">▲</button>
-                    <button class="wheel-nav-btn" id="wheel-next">▼</button>
-                </div>
             </div>
             {% else %}
             <div class="wheel-container">
@@ -77,19 +69,9 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="wheel-navigation">
-                    <button class="wheel-nav-btn" id="wheel-prev">▲</button>
-                    <button class="wheel-nav-btn" id="wheel-next">▼</button>
-                </div>
             </div>
             {% endif %}
         </main>
-
-        <footer>
-            {% if not before_start %}
-            <p>Turn the wheel to view past activities!</p>
-            {% endif %}
-        </footer>
     </div>
     <div class="attribution">
         Made with ♥

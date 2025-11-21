@@ -16,16 +16,16 @@ class ActivityWheel {
 
     init() {
         // Check if wheel elements exist (they won't if we're before start date)
-        const prevBtn = document.getElementById('wheel-prev');
-        const nextBtn = document.getElementById('wheel-next');
-
-        if (!prevBtn || !nextBtn || this.items.length === 0) {
+        if (this.items.length === 0) {
             return; // No wheel to initialize
         }
 
-        // Set up navigation buttons
-        prevBtn.addEventListener('click', () => this.rotate(-1));
-        nextBtn.addEventListener('click', () => this.rotate(1));
+        // Set up navigation buttons if they exist
+        const prevBtn = document.getElementById('wheel-prev');
+        const nextBtn = document.getElementById('wheel-next');
+
+        if (prevBtn) prevBtn.addEventListener('click', () => this.rotate(-1));
+        if (nextBtn) nextBtn.addEventListener('click', () => this.rotate(1));
 
         // Support mouse wheel scrolling
         this.wheelItems.addEventListener('wheel', (e) => {
@@ -33,6 +33,26 @@ class ActivityWheel {
             const direction = e.deltaY > 0 ? 1 : -1;
             this.rotate(direction);
         }, { passive: false });
+
+        // Support touch scrolling
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        this.wheelItems.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        this.wheelItems.addEventListener('touchmove', (e) => {
+            touchEndY = e.touches[0].clientY;
+        }, { passive: true });
+
+        this.wheelItems.addEventListener('touchend', () => {
+            const deltaY = touchStartY - touchEndY;
+            if (Math.abs(deltaY) > 30) { // Minimum swipe distance
+                const direction = deltaY > 0 ? 1 : -1;
+                this.rotate(direction);
+            }
+        }, { passive: true });
 
         // Support clicking on items to select them
         this.items.forEach((item, index) => {
@@ -179,17 +199,21 @@ class ActivityWheel {
             }
         });
 
-        // Update button states
+        // Update button states if they exist
         const prevBtn = document.getElementById('wheel-prev');
         const nextBtn = document.getElementById('wheel-next');
 
-        prevBtn.disabled = this.currentIndex === 0;
-        nextBtn.disabled = this.currentIndex === this.items.length - 1;
+        if (prevBtn) {
+            prevBtn.disabled = this.currentIndex === 0;
+            prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
+            prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
+        }
 
-        prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
-        nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
-        prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
-        nextBtn.style.cursor = nextBtn.disabled ? 'not-allowed' : 'pointer';
+        if (nextBtn) {
+            nextBtn.disabled = this.currentIndex === this.items.length - 1;
+            nextBtn.style.opacity = nextBtn.disabled ? '0.5' : '1';
+            nextBtn.style.cursor = nextBtn.disabled ? 'not-allowed' : 'pointer';
+        }
     }
 }
 

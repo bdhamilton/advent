@@ -1,3 +1,8 @@
+html, body {
+    padding:0;
+    margin:0;
+}
+
 @font-face {
     font-family: 'Linux Biolinum O';
     src: url('/static/font/LinBiolinum_R.otf') format('opentype');
@@ -69,18 +74,54 @@ header h1 {
     justify-content: center;
     font-size: 2.5rem;
     text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+header h1::before,
+header h1::after {
+    content: '';
+    width: 100px;
+    height: 60px;
+    background: url('/static/img/1.png') center/contain no-repeat;
+    margin: 0 15px;
+}
+
+@media (max-width: 768px) {
+    header h1::before,
+    header h1::after {
+        display: none;
+    }
+
+    .subtitle::after {
+        content: '';
+        display: block;
+        width: 100px;
+        height: 60px;
+        background: url('/static/img/1.png') center/contain no-repeat;
+        margin: 10px auto 0;
+    }
+
+    .wheel-container {
+        padding-top: 0 !important;
+        margin-top: 0;
+    }
+
+    .wheel-viewport {
+        overflow: visible;
+    }
 }
 
 .subtitle, .early-message {
     text-align: center;
     font-size:1.5rem;
+    margin-top: 0;
 }
 
 /* Wheel Container */
 .wheel-container {
     background: transparent;
     margin-top: 1em;
-    padding: 40px 20px;
+    padding: 40px 0px;
     position: relative;
     overflow: visible;
 }
