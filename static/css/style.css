@@ -192,10 +192,6 @@ header h1::after {
     text-align: left;
 }
 
-.activity-checkbox-form {
-    width: 100%;
-}
-
 .activity-date {
     font-weight: 700;
     color: #ff5754;
