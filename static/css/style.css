@@ -87,6 +87,10 @@ header h1::after {
 }
 
 @media (max-width: 768px) {
+    body {
+        background-color: #A8B58A;
+    }
+
     header h1::before,
     header h1::after {
         display: none;
